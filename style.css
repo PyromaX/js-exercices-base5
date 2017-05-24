@@ -1,0 +1,21 @@
+.ligne {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.hentai  {
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+}
+.hentai img {
+    width: 100%;
+}
+
+.left, .right{
+    position: absolute;
+    flex: 1;
+}

@@ -8,15 +8,67 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <main class="jumbotron container">
+        <main class="jumbotron">
+            <section class="container">
             <h1>Jeu de memory</h1>
 
             <h3>But du jeu : le but du jeu de memory est de collecter les paires correspondantes.</h3>
+            </section>
+            <div class="jeu" id="jeu">
 
-            <div class="table" id="table"></div>
+            </div>
             <script type="text/javascript">
-                //Remplissage du tableau de carte
+                //Fonction shuffle
+                function randomInt(mini, maxi)
+                {
+                    var nb = mini + (maxi+1-mini)*Math.random();
+                    return Math.floor(nb);
+                }
 
+                Array.prototype.shuffle = function(n)
+                {
+                    if(!n)
+                        n = this.length;
+                    if(n > 1)
+                    {
+                        var i = randomInt(0, n-1);
+                        var tmp = this[i];
+                        this[i] = this[n-1];
+                        this[n-1] = tmp;
+                        this.shuffle(n-1);
+                    }
+                };
+                //Remplissage du tableau de carte
+                function creatable(taille) {
+                    var table = [];
+                    for( var i = 0; i < (2 * taille) ; i++){
+                        table[i]={
+                                    "src" : Math.trunc(i/2)+".jpg",
+                                    "visible" : false
+                                  }
+                    }
+                    table.shuffle();
+                    return table;
+                }
+                var tableau = creatable(12);
+                function creahtml(tableau) {
+                    var jeuhtml = "";
+                    for ( var j = 0 ; j < 3 ; j++){
+                        jeuhtml += "<div class='ligne'>" ;
+
+                        for( var k = 0 ; k < 8 ; k++){
+                            jeuhtml += "<div class='hentai'>" +
+                                            "<img src='./img/rideau_rouge_left.png' class='left'>" +
+                                            "<img src='./img/rideau_rouge_right.png' class='right'>" +
+                                            "<img src='./img/"+ tableau[j*8+k].src +"' id='img"+(j*8+k)+"'>" +
+                                        "</div>";
+                        }
+
+                        jeuhtml +=   "</div>";
+                    }
+                    return jeuhtml;
+                }
+                document.getElementById('jeu').innerHTML = creahtml(tableau);
             </script>
         </main>
     </body>
