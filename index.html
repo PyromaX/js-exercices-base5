@@ -6,6 +6,8 @@
         <title>Memo game comics</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <link rel="stylesheet" href="style.css">
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
     </head>
     <body>
         <main class="jumbotron">
@@ -44,7 +46,8 @@
                     for( var i = 0; i < (2 * taille) ; i++){
                         table[i]={
                                     "src" : Math.trunc(i/2)+".jpg",
-                                    "visible" : false
+                                    "visible" : false,
+                                    "found" : false
                                   }
                     }
                     table.shuffle();
@@ -57,10 +60,10 @@
                         jeuhtml += "<div class='ligne'>" ;
 
                         for( var k = 0 ; k < 8 ; k++){
-                            jeuhtml += "<div class='hentai'>" +
-                                            "<img src='./img/rideau_rouge_left.png' class='left'>" +
-                                            "<img src='./img/rideau_rouge_right.png' class='right'>" +
-                                            "<img src='./img/"+ tableau[j*8+k].src +"' id='img"+(j*8+k)+"'>" +
+                            jeuhtml += "<div class='hentai' id='img"+(j*8+k)+"'>" +
+                                            "<img src='./img/rideau_rouge_left.png' id='left'>" +
+                                            "<img src='./img/rideau_rouge_right.png' id='right'>" +
+                                            "<img src='./img/"+ tableau[j*8+k].src + "'>" +
                                         "</div>";
                         }
                         jeuhtml +=   "</div>";
@@ -68,6 +71,75 @@
                     return jeuhtml;
                 }
                 document.getElementById('jeu').innerHTML = creahtml(tableau);
+
+                function ouverture(e) {
+                    $(e).children('#left').hide('slide');
+                    $(e).children('#right').hide('slide', {direction : "right"});
+                    tableau[e.getAttribute('id').substr(3, e.getAttribute('id').length)].visible = true;
+                    for( var n= 0 ; n < tableau.length; n++){
+                        if(tableau[n].visible){
+                            for( var o = n+1 ; o < tableau.length; o++){
+                                if(tableau[o].visible && !(tableau[o].found)){
+                                    if (tableau[o].src === tableau[n].src) {
+                                        tableau[n].found = true ;
+                                        tableau[o].found = true ;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                function fermeture(e) {
+                    $(e).children('#left').show('slide');
+                    $(e).children('#right').show('slide', {direction : "right"});
+//                    tableau[e.getAttribute('id').substr(3, e.getAttribute('id').length)].visible = false;
+
+
+
+                }
+
+                //faut que ca renvoie "referme l'image " si il y en a une autre d'ouverte qui n'as pas l'attribut "found" a true.
+                function mustBeRefermed() {
+                    var compteur = 0 ;
+                    for( var l= 0 ; l< tableau.length; l++){
+                       if( tableau[l].visible && !(tableau[l].found)){
+                           compteur++;
+                       }
+                    }
+                    if( compteur > 1 ){
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+
+                function victoire() {
+                    var pairesATrouver = tableau.length;
+                    for(var p = 0 ; p< tableau.length ; p++){
+                        if (tableau[p].found ){
+                            pairesATrouver -- ;
+                        }
+                    }
+                    if(pairesATrouver === 0){
+                        alert(' vous avez trouvé les 24 vierges sans tuer personne dans un attentat suicide, BRAVO!');
+                    }
+                }
+
+
+                $('.hentai').click(function () {
+                    ouverture(this);
+                    if(mustBeRefermed()) {
+                        for (var m=0; m< tableau.length ; m++){
+                            if( tableau[m].visible && !(tableau[m].found)){
+                                 setTimeout(fermeture, 2000, '#img'+ m);
+                                 tableau[m].visible = false;
+                            }
+                        }
+                    }
+                    console.log(tableau)
+                    victoire();
+                })
             </script>
         </main>
     </body>

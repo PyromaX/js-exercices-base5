@@ -6,7 +6,6 @@
 
 .hentai  {
     flex: 1;
-    width: 100%;
     overflow: hidden;
     position: relative;
     display: flex;
@@ -15,7 +14,8 @@
     width: 100%;
 }
 
-.left, .right{
+#left, #right{
     position: absolute;
+    width: 12.5vw;
     flex: 1;
 }
