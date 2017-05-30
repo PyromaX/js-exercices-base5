@@ -10,11 +10,13 @@
         <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
     </head>
     <body>
-        <main class="jumbotron">
+        <main class="jumbotron" id="modif">
             <section class="container">
-            <h1>Jeu de memory</h1>
+                <h1>Jeu de memory</h1>
 
-            <h3>But du jeu : le but du jeu de memory est de collecter les paires correspondantes.</h3>
+                <h3>But du jeu : le but du jeu de memory est de collecter les paires correspondantes.</h3>
+
+                <button class="btn btn-secondary" id="reload">Recommencer</button>
             </section>
             <div class="jeu" id="jeu">
 
@@ -40,6 +42,12 @@
                         this.shuffle(n-1);
                     }
                 };
+                //fonction reload
+
+                $('#reload').click(function () {
+                    refresh();
+                });
+
                 //Remplissage du tableau de carte
                 function creatable(taille) {
                     var table = [];
@@ -60,24 +68,33 @@
                         jeuhtml += "<div class='ligne'>" ;
 
                         for( var k = 0 ; k < 8 ; k++){
-                            jeuhtml += "<div class='hentai' id='img"+(j*8+k)+"'>" +
+                            jeuhtml += "<div class='bord'><div class='hentai' id='img"+(j*8+k)+"'>" +
                                             "<img src='./img/rideau_rouge_left.png' id='left'>" +
                                             "<img src='./img/rideau_rouge_right.png' id='right'>" +
                                             "<img src='./img/"+ tableau[j*8+k].src + "'>" +
-                                        "</div>";
+                                        "</div></div>";
                         }
                         jeuhtml +=   "</div>";
                     }
                     return jeuhtml;
                 }
-                document.getElementById('jeu').innerHTML = creahtml(tableau);
+
+                function refresh() {
+                    $(".jeu").hide();
+                    document.getElementById('jeu').innerHTML = creahtml(tableau);
+                    $(document).ready(function () {
+                        $(".jeu").show();
+                    })
+                }
+
+                refresh();
 
                 function ouverture(e) {
                     $(e).children('#left').hide('slide');
                     $(e).children('#right').hide('slide', {direction : "right"});
                     tableau[e.getAttribute('id').substr(3, e.getAttribute('id').length)].visible = true;
                     for( var n= 0 ; n < tableau.length; n++){
-                        if(tableau[n].visible){
+                        if(tableau[n].visible ){
                             for( var o = n+1 ; o < tableau.length; o++){
                                 if(tableau[o].visible && !(tableau[o].found)){
                                     if (tableau[o].src === tableau[n].src) {
@@ -92,21 +109,17 @@
                 function fermeture(e) {
                     $(e).children('#left').show('slide');
                     $(e).children('#right').show('slide', {direction : "right"});
-//                    tableau[e.getAttribute('id').substr(3, e.getAttribute('id').length)].visible = false;
-
-
-
                 }
 
                 //faut que ca renvoie "referme l'image " si il y en a une autre d'ouverte qui n'as pas l'attribut "found" a true.
                 function mustBeRefermed() {
-                    var compteur = 0 ;
-                    for( var l= 0 ; l< tableau.length; l++){
-                       if( tableau[l].visible && !(tableau[l].found)){
-                           compteur++;
-                       }
+                    var compteur = 0;
+                    for (var l = 0; l < tableau.length; l++) {
+                        if (tableau[l].visible && !(tableau[l].found)) {
+                            compteur++;
+                        }
                     }
-                    if( compteur > 1 ){
+                    if (compteur > 1) {
                         return true;
                     }
                     else {
@@ -123,23 +136,24 @@
                     }
                     if(pairesATrouver === 0){
                         alert(' vous avez trouvé les 24 vierges sans tuer personne dans un attentat suicide, BRAVO!');
+
                     }
                 }
-
-
+                
                 $('.hentai').click(function () {
+                    document.getElementById('reload').style.visibility = "visible"; //rendre visible le button 'reload'
                     ouverture(this);
-                    if(mustBeRefermed()) {
-                        for (var m=0; m< tableau.length ; m++){
-                            if( tableau[m].visible && !(tableau[m].found)){
-                                 setTimeout(fermeture, 2000, '#img'+ m);
-                                 tableau[m].visible = false;
+                    if (mustBeRefermed()) {
+                        for (var m = 0; m < tableau.length; m++) {
+                            if (tableau[m].visible && !(tableau[m].found)) {
+                                setTimeout(fermeture, 2000, '#img' + m);
+                                tableau[m].visible = false;
                             }
                         }
                     }
-                    console.log(tableau)
+                    console.log(tableau);
                     victoire();
-                })
+                });
             </script>
         </main>
     </body>
