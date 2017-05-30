@@ -1,5 +1,6 @@
 # Jeu des paires
 
+# Preview : https://htmlpreview.github.io/?https://github.com/PyromaX/js-exercices-base5/blob/master/index.html
 
 ## Règles
 L'espace de jeu est composé de cartes retournées face cachées. Le joueur retourne 2 cartes. Si elles sont identiques alors elles restent visibles, sinon elles reviennent en face cachée.
